@@ -1,0 +1,98 @@
+RES-			RESET -> 7404			
+EX1-			CS- -> 74125
+OEL-			R0 -> 7404
+LWRL-			W0 -> 7404
+UWRL-			W0 -> 7404
+VINT-			R6? -> 7404
+
+EXWAIT-			CS -> 74125 -> I/O CH RDY 
+32M+			
+DOP+	(IRQ?)
+
+CSL-
+
+W300 = 1xDATA
+W302 = 1xADDR
+R300 = 1xDATA
+
+
+
+-----
+-- 32 (OR) --
+W0 -> A1
+R0 -> B1
+Q1 == EX1
+EXWAIT- -> A2
+CS- -> B2
+Q2 == IOWAIT-
+(3,4 FREE)
+
+-- 04 (INVERTER) --
+RESET -> 7404 (1-2) == RES-
+	R2 -> 7404 (3-4) == VINT-
+	W0 -> 7404 (5-6) == LWRL- && UWRL-
+	R0 -> 7404 (8-9) == OEL-
+	EX1 -> 7404 (10-11) == EX1-
+(12-13 unused)
+
+-- 682 (ADDR DECODER) --
+A9:A3+AEN -> 74682 (P7:P0)
+JP7:JP1+GND -> 74682 (Q7:Q0)
+74682 (P=Q-) == CS-
+
+-- 125 (PULLDOWN) --
+CS- -> 74125 (1G-)
+GND -> 74125 (1A)
+74125 (1Y) -> IOCS16-
+IOWAIT- -> 74125 (2G-)
+GND -> 74125 (2A)
+74125 (2Y) -> IO CH RDY
+(3,4 unused)
+
+-- 138A (READ) --
+CS- -> 74138A (G2A-)
+IOR- -> 74138A (G2B-)
++5V -> 74138A (G1)
+A0 -> 75138A (A)
+A1 -> 75138A (B)
+A2 -> 75138A (C)
+75138A (Y0) -> R0
+75138A (Y2) -> R2
+75138A (Y4) -> R4
+75138A (Y6) -> R6
+
+-- 138B (WRITE) --
+CS- -> 74138B (G2A-)
+IOW- -> 74138B (G2B-)
++5V -> 74138B (G1)
+A0 -> 75138B (A)
+A1 -> 75138B (B)
+A2 -> 75138B (C)
+75138B (Y0) -> W0
+75138B (Y2) -> W2
+75138B (Y4) -> W4
+75138B (Y6) -> W6
+
+--- 273A (LO) --
+RES- -> MR-
+D0 -> Q0
+D1 -> Q1
+D2 -> Q2
+D3 -> Q3
+D4 -> Q4
+D5 -> Q5
+D6 -> Q6
+D7 -> Q7
+W2 -> CP
+
+--- 273B (HI) --
+RES- -> MR-
+D8 -> Q8
+D9 -> Q9
+D10 -> Q10
+D11 -> Q11
+D12 -> Q12
+D13 -> Q13
+D14 -> Q14
+D15 -> Q15
+W2 -> CP

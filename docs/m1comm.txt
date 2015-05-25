@@ -1,0 +1,123 @@
+Comm PCB
+--------
+
+MODEL-1 COMMUNICATION BD 837-8842 171-6293B (C) SEGA 1992
+|--------------------------------------------------------------------------------|
+|                                                                                |
+|    MB89237A            MB89374                                                 |
+|       JP4                                                                 LED1 |
+|    15112.17            Z80                                                     |
+|    JP2  JP3                                                       75179        |
+|    MB8464              315-5624                                     JP6        |
+|                                                       315-5547                 |
+|        315-5611                                            SW1    PC910     CN4|
+|                                                                                |
+|                                                                   PC910     CN5|
+|     MB8421             MB8431                                JP7               |
+|                                                                   JP5          |
+|        JP8                                                                  CN7|
+|                CN1                                    CN2                      |
+| |---------------------------------|   |---------------------------------|   CN6|
+| |---------------------------------|   |---------------------------------|      |
+|--------------------------------------------------------------------------------|
+Notes:
+      15112.17 - AMD AM27C100 128k x8 EPROM (DIP32, labelled 'EPR-15112')
+      Z80      - Zilog Z0840008PSC Z80 CPU, running at 8.000MHz (DIP40)
+      MB8464   - Fujitsu MB8464 8k x8 SRAM (DIP28)
+      MB8421   - Fujitsu MB8421-12LP 2k x8 SRAM (SDIP52)
+      MB8431   - Fujitsu MB8431-90LP 2k x8 SRAM (SDIP52)
+      MB89237A - Fujitsu MB89237A DMA Controller (DIP20)
+      MB89374  - Fujitsu MB89374 Data Link Controller (SDIP42)
+      75179    - Texas Instruments SN75179 Differential Driver and Receiver Pair (DIP8)
+      315-5547 - AMI 18CV8PC-25 PAL (DIP20)
+      315-5624 - MMI PAL16L8BCN PAL (DIP20)
+      315-5611 - Lattice GAL16V8A PAL (DIP20)
+      PC910    - Sharp PC910 opto-isolator (x2, DIP8)
+      SW1      - Push Button Switch (force enables board)
+      CN1, CN2 - Connectors to join Comm board to Video board
+      CN4      - 8 pin connector (differential data - fed by SN75179)
+      CN5      - 6 pin connector (isolated data - fed by PC910s)
+      CN6, CN7 - Connectors for network optical cable link
+      JP2      - Jumper, set to 2-3
+      JP3      - Jumper, set to 1-2
+      JP4      - Jumper, set to 1-2
+      JP5      - Jumper, shorted (shorted - selects optical RX line)
+      JP6      - Jumper, not shorted (shorted - enables differential RX line)
+      JP7      - Jumper, not shorted (shorted - enables isolated RX line)
+      JP8      - Jumper, set to 1-2 (1-2 selects HOST clock; 2-3 selectes internal clock (OSC1, 32MHz - unpopulated))
+
+
+
+-----
+315-5624
+
+B00000
+1011 0000 0000 0000 0000 0000
+
+B01000
+1011 0000 0001 0000 0000 0000
+
+2222 1111 1111 1100 0000 0000
+3210 9876 5432 1098 7654 3210
+
+A16 = 0
+A17 = 0
+A18 = 0
+A19 = 0
+A20 = 1
+A21 = 1
+A22 = 0
+A23 = 1
+
+Read  @ B00000 = MEMR
+Write @ B00000 = MEMW
+...
+Read  @ B00FFF = MEMR
+Write @ B00FFF = MEMW
+Read  @ B01000 = CNRD (Bit0)
+Write @ B01000 = CNWR (Bit0)
+Read  @ B01002 = FGRD (Bit0 & Bit7 [ZFGWR])
+Write @ B01002 = FGWR (Bit0)
+
+
+
+-----
+315-5610 (maybe 315-5611 too)
+
+(1) MREQ-
+(2) IREQ-
+(3) RD-
+(4) WR-
+(5) BUSAK-
+(6) M1-
+(7) INT5-
+(8) INT7
+(9) -
+(11) -
+
+(12) INT-
+(13) IQ-
+(14) MQ-
+(15) D4
+(16) IOWR-
+(17) IORD-
+(18) MWR-
+(19) MRD-
+
+MREQ- && RD- -> MQ- && MRD-
+MREQ- && WR- -> MQ- && MWR-
+IREQ- && RD- -> IQ- && IORD-
+IREQ- && WR- -> IQ- && IOWR-
+
+INT5- || INT7 -> INT-
+M1- && IREQ- && IRQ5- -> D4 = L
+M1- && IREQ- && IRQ7  -> D4 = H
+
+*A15 || MQ- -> MSEL0- (MEM 0x0000-0x7FFF - ROM)
+A14 (H) && A15 (L) -> MSEL1- (MEM 0x8000-0xBFFF - Internal SRAM)
+A14 (H) && A15 (H) -> MSEL2- (MEM 0xC000-0xFFFF - Shared SRAM)
+
+A5 (L) && A6 (L) -> ISL0- (IO 0x00-0x0F)
+A5 (H) && A6 (L) -> ISL1- (IO 0x10-0x1F)
+A5 (L) && A6 (H) -> ISL2- (IO 0x20-0x2F)
+A5 (H) && A6 (H) -> ISL3- (IO 0x30-0x3F)
