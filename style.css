@@ -1,0 +1,61 @@
+body {
+	padding-top: 1em;
+	padding-left: 2em;
+}
+
+table {
+	border: 1px black solid;
+	border-collapse: collapse;
+	margin-top: 2em;
+	margin-right: 2em;
+	white-space: nowrap;
+}
+
+th {
+	font-family: monospace;
+	padding: 0.5em 0.5em 0 0.5em ;
+	vertical-align: top;
+	text-align: left;
+}
+
+caption {
+	padding: 0.5em;
+	background-color: black;
+	color: white;
+	font-size: large;
+}
+
+td {
+	padding: 0.5em;
+	border: 1px black solid;
+	vertical-align: top;
+	font-family: monospace;
+}
+
+td.gnd {
+	background-color: #333333;
+}
+
+td.vcc {
+	background-color: #ff0000;
+}
+
+td.abus {
+	background-color: #aaffaa;
+}
+
+td.cbus {
+	background-color: #aaaaff;
+}
+
+td.dbus {
+	background-color: #ffaaaa;
+}
+
+td.active-low {
+	text-decoration: overline;
+}
+
+td.gnd, td.vcc {
+	color: #ffffff;
+}
