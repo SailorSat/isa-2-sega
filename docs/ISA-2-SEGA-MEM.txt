@@ -1,0 +1,71 @@
+AAAA AAAA AAAA AAAA AAAA AAAA
+2222 1111 1111 1100 0000 0000
+3210 9876 5432 1098 7654 3210
+
+0000.1101 0000.0000 0000.0000	0D0000-DFFFF	128KB Address
+1111.0000 0000.0000 0000.0000	F00000-FFFFFF	1MB Address
+++++ +++*
+
+LA23..LA17
+A00..A16
+D00..D15
+RESET
+BALE
+IOCHDRY
+
+MEMCS16-
+MEMR-
+MEMW-
+
+
+--- ISA-2-SEGA-MEM board ---
+2x	74HCT 245		DIL20		Bus-Transceiver
+3x	74HCT 573		DIL20		Latch
+
+1x	74HCT 688		DIL20		Address comparator
+1x	SIL 9-8 18K		1x9		PullUps for 688
+1x	RND 210-00166		DIL16		DipSwitch for 688
+
+1x	74HCT 125		DIL14		Quad-Buffer
+
+1x	74HCT 00		DIL14		Quad-NAND
+1x	74HCT 32		DIL14		Quad-OR
+
+4x	GS-KO 14P		DIL14		Socket
+6x	GS-KO 20P		DIL20		Socket
+
+1x	OSZI 32,000000	DIL14		32MHz Oscillator
+
+1x	MPE 094-2-072	2x36		2x36 Pin Connector
+
+
+--- ISA-2-SEGA adapter ---
+
+1x	MPE 087-2-072	2x36		2x36 Pin Header
+1x	FL-C 96-2,5		3x32		3x32 DIN 41612
+
+
+--- address decoder ---
+BALE + LA23..LA17 > 74HCT 273	= Latch LA23...LA17 on BALE
+
+BA23-BA17 > 74HCT 688			= Compare A23...A17 vs. DipSwitch
+
+
+--- glue logic #1 ---
+MEMR- + MEMW- > 00-1			= MO+, MemoryRead/Write to NAND, for MemoryOperation check
+
+VCC + RES+ > 00-3				= RES-, use NAND as inverter for Reset
+VCC + MO+ >  00-4				= MO-, use NAND as inverter for MemoryOperation
+
+
+--- glue logic #2 ---
+GND + MEMR- > 32-1				= BMEMR-m use OR as buffer for MemoryRead
+GND + MEMW- > 32-2				= BMEMW-m use OR as buffer for MemoryWrite
+
+EX1- + EXWAIT- > 32-3			= WAIT-, use OR as ready check
+CS- + MO- > 32-4				= EX1-, use OR as access check
+
+
+--- glue logic #3 ---
+CS- + GND > 125-1				= MEMCS16-, use 125 to signal 16bit memory access
+WAIT- + GND > 125-2				= IOCHDRY+, use 125 to signal wait state
