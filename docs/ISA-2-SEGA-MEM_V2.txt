@@ -1,33 +1,25 @@
-MODEL1 - hardwired 0000 1011.0000 (00B0.0000-00B0.FFFF)
-MODEL2 - hardwired 0001 1010.0001 (01A1.0000-01A1.FFFF)
+MODEL1 - hardwired 0000.0000 1011.0000 ****.**** ****.**** (00B0.0000-00B0.FFFF)
+MODEL2 - hardwired 0000.0001 1010.0001 ****.**** ****.**** (01A1.0000-01A1.FFFF)
 
-AAAA AAAA AAAA AAAA AAAA AAAA
-2222 1111 1111 1100 0000 0000
-3210 9876 5432 1098 7654 3210
+AAAA AAAA AAAA AAAA AAAA
+1111 1111 1100 0000 0000
+9876 5432 1098 7654 3210
 
-0000.1100 0000.0000 0000.0000   0C0000-0CFFFF	64KB Address Window
-0000.1101 0000.0000 0000.0000	0D0000-0DFFFF	64KB Address Window
-1111.0000 0000.0000 0000.0000	F00000-FFFFFF	1MB Address Window
-++++ ++++
+1100 0000.0000 0000.0000	0C0000-0CFFFF	64KB Address Window
+1101 0000.0000 0000.0000	0D0000-0DFFFF	64KB Address Window
 
-LA23..LA17
-A00..A16
+
+A00..A19
 D00..D15
 RESET
-(B)ALE
 IOCHDRY
 
 MEMCS16-
-MEMR-
-MEMW-
+SMEMR-
+SMEMW-
 
 
 --- ISA-2-SEGA-MEM board ---
-2x	74HCT 245			DIL20		Bus-Transceiver
-2x	SIL 9-8 4,7K		1x9			PullUps for Data-Bus
-
-3x	74HCT 573			DIL20		Latch
-
 1x	74HCT 688			DIL20		Address comparator
 1x	SIL 9-8 18K			1x9			PullUps for 688
 1x	RND 210-00166		DIL16		DipSwitch for 688
@@ -38,7 +30,7 @@ MEMW-
 1x	74HCT 32			DIL14		Quad-OR
 
 4x	GS-KO 14P			DIL14		Socket
-6x	GS-KO 20P			DIL20		Socket
+1x	GS-KO 20P			DIL20		Socket
 
 1x	OSZI 32,000000		DIL14		32MHz Oscillator
 
@@ -52,10 +44,8 @@ MEMW-
 
 
 --- address decoder ---
-BALE + LA23..LA17 > 74HCT 273		= Latch LA23...LA17 on BALE
-
-BA23-BA17 > 74HCT 688				= Compare A23...A16 vs. DipSwitch
-AEN	  > 74HCT 688					= Ignore DMA? (may be wired to GND)
+A19..A16	> 74HCT 688				= Compare A19...A16 vs. DipSwitch
+AEN			> 74HCT 688				= Ignore DMA? (may be wired to GND)
 
 
 --- glue logic #1 ---
@@ -98,29 +88,6 @@ jp4	q4
 jp5	q5
 jp6	q6
 jp7	q7
----------------------------
----------------------------
-273 - address buffer (3x Address)
-
-RES-	CLR
-BALE	CLK
-
-LA16	D0	Q0	BA16	buffered address
-LA17	D1	Q1	BA17	.
-LA18	D2	Q2	BA18	.
-LA19	D3	Q3	BA19	.
-LA20	D4	Q4	BA20	.
-LA21	D5	Q5	BA21	.
-LA22	D6	Q6	BA22	.
-LA23	D7	Q7	BA23	.
-
-LA08
-...
-LA15
-
-LA00
-...
-LA07
 ---------------------------
 ---------------------------
 00 - nand
@@ -166,11 +133,4 @@ GND		3d		3o		---			not used
 
 GND		4e
 GND		4d		4o		---			not used
----------------------------
----------------------------
-245 - transceivers (2x Data)
-
-CS-		-> G-			- enable on CS- (alternate, use EX1-)
-MEMR-	-> DIR			- ISA to SEGA on HIGH, SEGA to ISA on LOW
-Dxx		-> Bxx			- data lines
 ---------------------------
